@@ -1,6 +1,5 @@
 package com.example.cameraapp
 
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
@@ -11,14 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.cameraapp.databinding.FragmentCameraBinding
 import java.io.File
 import java.text.SimpleDateFormat
@@ -46,53 +44,13 @@ class CameraFragment : Fragment() {
         previewView = fragmentCameraBinding.cameraFragmentPreviewView
         outputDirectory = MainActivity.getOutputDirectory(requireContext())
         fragmentCameraBinding.cameraFragmentCaptureButton.setOnClickListener { captureImage() }
-        if (checkPermission()) {
-            getCameraReady()
-        } else
-            enablePermissions()
-
+        getCameraReady()
     }
 
-    private fun checkPermission(): Boolean {
-        return context?.let {
-            ContextCompat.checkSelfPermission(
-                it,
-                android.Manifest.permission.CAMERA
-            )
-        } == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun enablePermissions() {
-        ActivityCompat.requestPermissions(
-            this.requireActivity(),
-            arrayOf(android.Manifest.permission.CAMERA),
-            Companion.CAMERA_REQUEST_CODE
-        )
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(context, "Camera Permission Granted", Toast.LENGTH_SHORT).show()
-            getCameraReady()
-        } else {
-            Toast.makeText(
-                context,
-                "Please enable camera permissions\n Otherwise app won't work",
-                Toast.LENGTH_SHORT
-            ).show()
-            Log.e(TAG, "onRequestPermissionsResult: Camera Permission Denied")
-        }
-
-    }
 
     private fun getCameraReady() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-        cameraProviderFuture.addListener(Runnable {
+        cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
             preview = Preview.Builder().build()
             preview?.setSurfaceProvider(previewView.surfaceProvider)
@@ -103,7 +61,6 @@ class CameraFragment : Fragment() {
             camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
         }, ContextCompat.getMainExecutor(context))
     }
-
 
     private fun captureImage() {
         imageCapture?.let { imageCapture ->
@@ -131,7 +88,6 @@ class CameraFragment : Fragment() {
                     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                         val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
                         Log.d(TAG, "Photo capture succeeded: $savedUri")
-
                         // If the folder selected is an external media directory, this is
                         // unnecessary but otherwise other apps will not be able to access our
                         // images unless we scan them using [MediaScannerConnection]
@@ -143,6 +99,13 @@ class CameraFragment : Fragment() {
                             arrayOf(mimeType)
                         ) { _, uri ->
                             Log.d(TAG, "Image capture scanned into media store: $uri")
+                        }
+                        if (photoFile.totalSpace > 1) {
+                            findNavController().navigate(
+                                CameraFragmentDirections.actionCameraFragmentToPreviewFragment(
+                                    savedUri.toString()
+                                )
+                            )
                         }
                     }
                 })
@@ -165,7 +128,6 @@ class CameraFragment : Fragment() {
         private const val PHOTO_EXTENSION = ".jpg"
         private const val ANIMATION_FAST_MILLIS = 50L
         private const val ANIMATION_SLOW_MILLIS = 100L
-        private const val CAMERA_REQUEST_CODE = 1100
 
         /** Helper function used to create a timestamped file */
         private fun createFile(baseFolder: File, format: String, extension: String) =
@@ -173,6 +135,5 @@ class CameraFragment : Fragment() {
                 baseFolder, SimpleDateFormat(format, Locale.US)
                     .format(System.currentTimeMillis()) + extension
             )
-
     }
 }

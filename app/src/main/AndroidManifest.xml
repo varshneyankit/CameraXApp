@@ -2,12 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.cameraapp">
 
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18"/>
-    <uses-feature android:name="android.hardware.Camera.any"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.Camera.any" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,10 +22,11 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".MainActivity"
-            android:screenOrientation="fullUser"
+        <activity
+            android:name=".MainActivity"
+            android:resizeableActivity="true"
             android:rotationAnimation="seamless"
-            android:resizeableActivity="true">
+            android:screenOrientation="fullUser">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -37,12 +35,15 @@
             <!-- Register as a system camera app -->
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
-                <action android:name="android.media.action.STILL_IMAGE_CAMERA"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <!-- Declare notch support -->
-            <meta-data android:name="android.notch_support" android:value="true"/>
+            <meta-data
+                android:name="android.notch_support"
+                android:value="true" />
         </activity>
     </application>
 
