@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">CameraX App</string>
     <string name="fragment_preview_title">Image Preview</string>
+    <string name="preview_image_cd">Captured Image Preview</string>
+    <string name="activity_permission_granted">Permission request granted</string>
+    <string name="activity_permission_denied">Permission denied \nApp won\'t work without camera permissions</string>
 </resources>

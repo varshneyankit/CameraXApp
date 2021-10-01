@@ -1,5 +1,6 @@
 package com.example.cameraapp
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
@@ -30,6 +31,11 @@ class CameraFragment : Fragment() {
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
     private lateinit var previewView: PreviewView
+    private val TAG = "CameraXBasic"
+    private val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
+    private val PHOTO_EXTENSION = ".jpg"
+    private val ANIMATION_FAST_MILLIS = 50L
+    private val ANIMATION_SLOW_MILLIS = 100L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,11 +48,19 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         previewView = fragmentCameraBinding.cameraFragmentPreviewView
-        outputDirectory = MainActivity.getOutputDirectory(requireContext())
+        outputDirectory = getOutputDirectory(requireContext())
         fragmentCameraBinding.cameraFragmentCaptureButton.setOnClickListener { captureImage() }
         getCameraReady()
     }
 
+    private fun getOutputDirectory(context: Context): File {
+        val appContext = context.applicationContext
+        val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
+            File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
+        }
+        return if (mediaDir != null && mediaDir.exists())
+            mediaDir else appContext.filesDir
+    }
 
     private fun getCameraReady() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
@@ -66,7 +80,7 @@ class CameraFragment : Fragment() {
         imageCapture?.let { imageCapture ->
 
             // Create output file to hold the image
-            val photoFile = createFile(outputDirectory, FILENAME, PHOTO_EXTENSION)
+            val photoFile = createFile(outputDirectory)
 
             // Setup image capture metadata
             val metadata = ImageCapture.Metadata()
@@ -121,19 +135,9 @@ class CameraFragment : Fragment() {
         }
     }
 
-    companion object {
-
-        private const val TAG = "CameraXBasic"
-        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private const val PHOTO_EXTENSION = ".jpg"
-        private const val ANIMATION_FAST_MILLIS = 50L
-        private const val ANIMATION_SLOW_MILLIS = 100L
-
-        /** Helper function used to create a timestamped file */
-        private fun createFile(baseFolder: File, format: String, extension: String) =
-            File(
-                baseFolder, SimpleDateFormat(format, Locale.US)
-                    .format(System.currentTimeMillis()) + extension
-            )
-    }
+    private fun createFile(baseFolder: File) =
+        File(
+            baseFolder, SimpleDateFormat(FILENAME, Locale.US)
+                .format(System.currentTimeMillis()) + PHOTO_EXTENSION
+        )
 }

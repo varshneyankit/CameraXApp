@@ -27,6 +27,7 @@
         android:id="@+id/preview_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:src="@tools:sample/backgrounds/scenic" />
+        tools:src="@tools:sample/backgrounds/scenic"
+        android:contentDescription="@string/preview_image_cd" />
 
 </LinearLayout>
