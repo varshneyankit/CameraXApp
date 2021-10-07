@@ -3,18 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/permission_fragment">
-    <fragment
-        android:id="@+id/permission_fragment"
-        android:name="com.example.cameraapp.PermissionsFragment"
-        android:label="PermissionFragment">
-        <action
-            android:id="@+id/action_PermissionFragment_to_CameraFragment"
-            app:destination="@id/camera_fragment"
-            app:popUpTo="@+id/nav_graph"
-            app:popUpToInclusive="true" />
-    </fragment>
-
+    app:startDestination="@id/camera_fragment">
     <fragment
         android:id="@+id/camera_fragment"
         android:name="com.example.cameraapp.CameraFragment"

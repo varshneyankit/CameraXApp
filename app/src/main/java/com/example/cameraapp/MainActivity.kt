@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
-        if (hasPermissions(this)) {
+        if (!hasPermissions(this)) {
             requestPermissions(PERMISSIONS_REQUIRED, CAMERA_PERMISSION_REQUEST_CODE)
         }
     }

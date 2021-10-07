@@ -102,9 +102,7 @@ class CameraFragment : Fragment() {
                     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                         val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
                         Log.d(TAG, "Photo capture succeeded: $savedUri")
-                        // If the folder selected is an external media directory, this is
-                        // unnecessary but otherwise other apps will not be able to access our
-                        // images unless we scan them using [MediaScannerConnection]
+                        // images will not visible unless we scan them using [MediaScannerConnection]
                         val mimeType = MimeTypeMap.getSingleton()
                             .getMimeTypeFromExtension(savedUri.toFile().extension)
                         MediaScannerConnection.scanFile(
@@ -131,7 +129,6 @@ class CameraFragment : Fragment() {
                     { fragmentCameraBinding.root.foreground = null }, ANIMATION_FAST_MILLIS
                 )
             }, ANIMATION_SLOW_MILLIS)
-
         }
     }
 
