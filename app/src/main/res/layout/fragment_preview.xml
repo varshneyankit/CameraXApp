@@ -7,22 +7,6 @@
     android:orientation="vertical"
     tools:context=".PreviewFragment">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary">
-
-        <TextView
-            android:id="@+id/create_address_title_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="6dp"
-            android:text="@string/fragment_preview_title"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-    </androidx.appcompat.widget.Toolbar>
-
     <ImageView
         android:id="@+id/preview_image_view"
         android:layout_width="match_parent"

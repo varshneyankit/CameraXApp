@@ -12,8 +12,6 @@ import com.example.cameraapp.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var activityMainBinding: ActivityMainBinding
-    private val CAMERA_PERMISSION_REQUEST_CODE = 1100
-    private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,5 +42,10 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    companion object{
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 1100
+        private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
     }
 }

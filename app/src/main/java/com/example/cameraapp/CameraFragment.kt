@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -26,16 +27,8 @@ import java.util.*
 class CameraFragment : Fragment() {
 
     private lateinit var fragmentCameraBinding: FragmentCameraBinding
-    private lateinit var outputDirectory: File
-    private var camera: Camera? = null
-    private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
     private lateinit var previewView: PreviewView
-    private val TAG = "CameraXBasic"
-    private val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
-    private val PHOTO_EXTENSION = ".jpg"
-    private val ANIMATION_FAST_MILLIS = 50L
-    private val ANIMATION_SLOW_MILLIS = 100L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,8 +41,9 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         previewView = fragmentCameraBinding.cameraFragmentPreviewView
-        outputDirectory = getOutputDirectory(requireContext())
         fragmentCameraBinding.cameraFragmentCaptureButton.setOnClickListener { captureImage() }
+        val activity = activity as AppCompatActivity
+        activity.supportActionBar?.hide()
         getCameraReady()
     }
 
@@ -66,17 +60,18 @@ class CameraFragment : Fragment() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
-            preview = Preview.Builder().build()
-            preview?.setSurfaceProvider(previewView.surfaceProvider)
+            val preview = Preview.Builder().build()
+            preview.setSurfaceProvider(previewView.surfaceProvider)
             imageCapture = ImageCapture.Builder().build()
             val cameraSelector =
                 CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
             cameraProvider.unbindAll()
-            camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
         }, ContextCompat.getMainExecutor(context))
     }
 
     private fun captureImage() {
+        val outputDirectory = getOutputDirectory(requireContext())
         imageCapture?.let { imageCapture ->
 
             // Create output file to hold the image
@@ -137,4 +132,12 @@ class CameraFragment : Fragment() {
             baseFolder, SimpleDateFormat(FILENAME, Locale.US)
                 .format(System.currentTimeMillis()) + PHOTO_EXTENSION
         )
+
+    companion object{
+        private const val TAG = "CameraXBasic"
+        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private const val PHOTO_EXTENSION = ".jpg"
+        private const val ANIMATION_FAST_MILLIS = 50L
+        private const val ANIMATION_SLOW_MILLIS = 100L
+    }
 }
